@@ -13,6 +13,7 @@
 #include <cstdlib>
 #include <vector>
 #include <cstring>
+#include <map>
 
 class HelloTriangle {
 public:
@@ -39,10 +40,16 @@ private:
 
 	VkInstance instance;
 	VkDebugUtilsMessengerEXT debugMessenger;
+	VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
+
 	void createInstance();
 	bool checkValidationLayerSupport();
 	std::vector<const char*>  getRequiredExtensions();
 	void setupDebugMessenger();
+
+	void pickPhysicalDevice();
+	bool isDeviceSuitable(VkPhysicalDevice device);
+	int rateDeviceSuitability(VkPhysicalDevice device);
 
 	static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
 		VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
