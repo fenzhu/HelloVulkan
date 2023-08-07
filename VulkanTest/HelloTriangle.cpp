@@ -151,45 +151,48 @@ void HelloTriangle::pickPhysicalDevice() {
 
 	std::vector<VkPhysicalDevice> devices(deviceCount);
 	vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
-
-	std::multimap<int, VkPhysicalDevice> candidates;
-
 	std::cout << "devices:\n";
 	for (const auto& device : devices) {
 		VkPhysicalDeviceProperties deviceProperties;
 		vkGetPhysicalDeviceProperties(device, &deviceProperties);
 		std::cout << '\t' << deviceProperties.deviceName << '\n';
 
-		int score = rateDeviceSuitability(device);
-		candidates.insert(std::make_pair(score, device));
+		if (isDeviceSuitable(device)) {
+			physicalDevice = device;
+			break;
+		}
 	}
 
-	// Check if the best candidate is suitable at all
-	if (candidates.rbegin()->first > 0) {
-		physicalDevice = candidates.rbegin()->second;
-	}
-	else {
+	if (physicalDevice == VK_NULL_HANDLE) {
 		throw std::runtime_error("failed to find a suitable GPU!");
 	}
+
+	//don't need to rate devices for now
+	//std::multimap<int, VkPhysicalDevice> candidates;
+	//for (const auto& device : devices) {
+	//	int score = rateDeviceSuitability(device);
+	//	candidates.insert(std::make_pair(score, device));
+	//}
+
+	//if (candidates.rbegin()->first > 0) {
+	//	physicalDevice = candidates.rbegin()->second;
+	//}
+	//else {
+	//	throw std::runtime_error("failed to find a suitable GPU!");
+	//}
 }
 
 bool HelloTriangle::isDeviceSuitable(VkPhysicalDevice device) {
+	QueueFamilyIndices indices = findQueueFamilies(device);
+	return indices.graphicsFamily.has_value();
+}
+
+int HelloTriangle::rateDeviceSuitability(VkPhysicalDevice device) {
 	//name, type, supported vulkan verison
 	VkPhysicalDeviceProperties deviceProperties;
 	vkGetPhysicalDeviceProperties(device, &deviceProperties);
 
 	//texture compression, 64 bit floats, multi viewport rendering
-	VkPhysicalDeviceFeatures deviceFeatures;
-	vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
-
-	return deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU &&
-		deviceFeatures.geometryShader;
-}
-
-int HelloTriangle::rateDeviceSuitability(VkPhysicalDevice device) {
-	VkPhysicalDeviceProperties deviceProperties;
-	vkGetPhysicalDeviceProperties(device, &deviceProperties);
-
 	VkPhysicalDeviceFeatures deviceFeatures;
 	vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
 
@@ -210,6 +213,27 @@ int HelloTriangle::rateDeviceSuitability(VkPhysicalDevice device) {
 
 	return score;
 }
+
+QueueFamilyIndices HelloTriangle::findQueueFamilies(VkPhysicalDevice device) {
+	QueueFamilyIndices indices;
+	uint32_t queueFamilyCount = 0;
+	vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
+
+	std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
+	vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
+	int i = 0;
+	for (const auto& queueFamily : queueFamilies) {
+		if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+			indices.graphicsFamily = i;
+		}
+		if (indices.isComplete()) {
+			break;
+		}
+		i++;
+	}
+	return indices;
+}
+
 
 VKAPI_ATTR VkBool32 VKAPI_CALL HelloTriangle::debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
 	VkDebugUtilsMessageTypeFlagsEXT messageType,
