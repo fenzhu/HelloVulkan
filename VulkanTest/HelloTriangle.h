@@ -50,6 +50,8 @@ private:
 	VkInstance instance;
 	VkDebugUtilsMessengerEXT debugMessenger;
 	VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
+	VkDevice device;
+	VkQueue graphicsQueue;
 
 	void createInstance();
 	bool checkValidationLayerSupport();
@@ -59,6 +61,8 @@ private:
 	void pickPhysicalDevice();
 	bool isDeviceSuitable(VkPhysicalDevice device);
 	int rateDeviceSuitability(VkPhysicalDevice device);
+
+	void createLogicalDevice();
 
 	QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
 
