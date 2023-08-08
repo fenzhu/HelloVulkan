@@ -19,6 +19,7 @@ void HelloTriangle::initWindow() {
 void HelloTriangle::initVulkan() {
 	createInstance();
 	setupDebugMessenger();
+	createSurface();
 	pickPhysicalDevice();
 	createLogicalDevice();
 }
@@ -36,7 +37,8 @@ void HelloTriangle::cleanup() {
 	if (enableValidationLayers) {
 		DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
 	}
-
+	
+	vkDestroySurfaceKHR(instance, surface, nullptr);
 	vkDestroyInstance(instance, nullptr);
 
 	glfwDestroyWindow(window);
@@ -128,6 +130,12 @@ std::vector<const char*> HelloTriangle::getRequiredExtensions() {
 	}
 
 	return extensions;
+}
+
+void HelloTriangle::createSurface() {
+	if (glfwCreateWindowSurface(instance, window, nullptr, &surface) != VK_SUCCESS) {
+		throw std::runtime_error("failed to create window surface");
+	}
 }
 
 void HelloTriangle::setupDebugMessenger() {
@@ -239,7 +247,7 @@ QueueFamilyIndices HelloTriangle::findQueueFamilies(VkPhysicalDevice device) {
 
 void HelloTriangle::createLogicalDevice() {
 	QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
-	
+
 	VkDeviceQueueCreateInfo queueCreateInfo{};
 	queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
 	queueCreateInfo.queueFamilyIndex = indices.graphicsFamily.value();

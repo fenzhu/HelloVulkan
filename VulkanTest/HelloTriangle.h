@@ -52,10 +52,13 @@ private:
 	VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
 	VkDevice device;
 	VkQueue graphicsQueue;
+	VkSurfaceKHR surface;
 
 	void createInstance();
 	bool checkValidationLayerSupport();
 	std::vector<const char*>  getRequiredExtensions();
+
+	void createSurface();
 	void setupDebugMessenger();
 
 	void pickPhysicalDevice();
