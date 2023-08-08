@@ -16,6 +16,8 @@
 #include <map>
 #include <optional>
 #include <set>
+#include <limits>
+#include <algorithm>
 
 struct QueueFamilyIndices {
 	std::optional<uint32_t> graphicsFamily;
@@ -65,6 +67,7 @@ private:
 	VkQueue graphicsQueue;
 	VkSurfaceKHR surface;
 	VkQueue presentQueue;
+	VkSwapchainKHR swapChain;
 
 	void createInstance();
 	bool checkValidationLayerSupport();
@@ -77,11 +80,17 @@ private:
 	bool isDeviceSuitable(VkPhysicalDevice device);
 	int rateDeviceSuitability(VkPhysicalDevice device);
 
-	void createLogicalDevice();
-
 	QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
+
 	bool checkDeviceExtensionSupport(VkPhysicalDevice device);
 	SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
+	VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
+	VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
+	VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
+
+	void createLogicalDevice();
+
+	void createSwapChain();
 
 	static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
 		VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
