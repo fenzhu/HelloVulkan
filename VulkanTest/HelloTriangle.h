@@ -71,6 +71,7 @@ private:
 	std::vector<VkImage> swapChainImages;
 	VkFormat swapChainImageFormat;
 	VkExtent2D swapChainExtent;
+	std::vector<VkImageView> swapChainImageViews;
 
 	void createInstance();
 	bool checkValidationLayerSupport();
@@ -94,6 +95,7 @@ private:
 	void createLogicalDevice();
 
 	void createSwapChain();
+	void createImageViews();
 
 	static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
 		VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
