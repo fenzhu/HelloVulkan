@@ -18,6 +18,7 @@
 #include <set>
 #include <limits>
 #include <algorithm>
+#include <fstream>
 
 struct QueueFamilyIndices {
 	std::optional<uint32_t> graphicsFamily;
