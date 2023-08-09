@@ -99,6 +99,9 @@ private:
 	void createImageViews();
 
 	void createGraphicsPipeline();
+	VkShaderModule createShaderModule(const std::vector<char>& code);
+
+	static std::vector<char> readFile(const std::string& filename);
 
 	static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
 		VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
