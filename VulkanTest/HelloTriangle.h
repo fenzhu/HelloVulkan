@@ -73,6 +73,7 @@ private:
 	VkFormat swapChainImageFormat;
 	VkExtent2D swapChainExtent;
 	std::vector<VkImageView> swapChainImageViews;
+	VkPipelineLayout pipelineLayout;
 
 	void createInstance();
 	bool checkValidationLayerSupport();
@@ -100,6 +101,7 @@ private:
 
 	void createGraphicsPipeline();
 	VkShaderModule createShaderModule(const std::vector<char>& code);
+	void createRenderPass();
 
 	static std::vector<char> readFile(const std::string& filename);
 
