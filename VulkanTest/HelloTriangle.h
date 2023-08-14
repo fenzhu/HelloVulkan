@@ -76,6 +76,7 @@ private:
 	VkRenderPass renderPass;
 	VkPipelineLayout pipelineLayout;
 	VkPipeline graphicsPipeline;
+	std::vector<VkFramebuffer> swapChainFramebuffers;
 
 	void createInstance();
 	bool checkValidationLayerSupport();
@@ -104,6 +105,7 @@ private:
 	void createGraphicsPipeline();
 	VkShaderModule createShaderModule(const std::vector<char>& code);
 	void createRenderPass();
+	void createFramebuffers();
 
 	static std::vector<char> readFile(const std::string& filename);
 
