@@ -77,6 +77,8 @@ private:
 	VkPipelineLayout pipelineLayout;
 	VkPipeline graphicsPipeline;
 	std::vector<VkFramebuffer> swapChainFramebuffers;
+	VkCommandPool commandPool;
+	VkCommandBuffer commandBuffer;
 
 	void createInstance();
 	bool checkValidationLayerSupport();
@@ -106,7 +108,10 @@ private:
 	VkShaderModule createShaderModule(const std::vector<char>& code);
 	void createRenderPass();
 	void createFramebuffers();
-
+	void createCommandPool();
+	void createCommandBuffer();
+	void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
+	
 	static std::vector<char> readFile(const std::string& filename);
 
 	static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
