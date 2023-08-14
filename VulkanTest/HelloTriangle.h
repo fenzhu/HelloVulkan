@@ -60,6 +60,11 @@ private:
 	void initVulkan();
 	void mainLoop();
 	void cleanup();
+	void drawFrame();
+
+	VkSemaphore imageAvailableSemaphore;
+	VkSemaphore renderFinishedSemaphore;
+	VkFence inFlightFence;
 
 	VkInstance instance;
 	VkDebugUtilsMessengerEXT debugMessenger;
@@ -111,7 +116,7 @@ private:
 	void createCommandPool();
 	void createCommandBuffer();
 	void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
-	
+	void createSyncObjects();
 	static std::vector<char> readFile(const std::string& filename);
 
 	static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
