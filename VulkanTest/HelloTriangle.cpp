@@ -38,6 +38,8 @@ void HelloTriangle::mainLoop() {
 		glfwPollEvents();
 		drawFrame();
 	}
+
+	vkDeviceWaitIdle(device);
 }
 
 void HelloTriangle::drawFrame() {
