@@ -463,7 +463,6 @@ SwapChainSupportDetails HelloTriangle::querySwapChainSupport(VkPhysicalDevice de
 
 	uint32_t formatCount;
 	vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, nullptr);
-
 	if (formatCount != 0) {
 		details.formats.resize(formatCount);
 		vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, details.formats.data());
@@ -471,7 +470,6 @@ SwapChainSupportDetails HelloTriangle::querySwapChainSupport(VkPhysicalDevice de
 
 	uint32_t presentModeCount;
 	vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &presentModeCount, nullptr);
-
 	if (presentModeCount != 0) {
 		details.presentModes.resize(presentModeCount);
 		vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &presentModeCount, details.presentModes.data());
@@ -491,6 +489,12 @@ VkSurfaceFormatKHR HelloTriangle::chooseSwapSurfaceFormat(const std::vector<VkSu
 }
 
 VkPresentModeKHR HelloTriangle::chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes) {
+	//conditions for showing images to the screen
+	//vertical blank: display refresh moment
+	//1 immediate.
+	//2 FIFO. similar to vertical sync, wait on queue full.
+	//3 FIFO_relaxed. queue empty, not waiting vertical blank, transfer to screen immediately when image ready. may result in tearing.
+	//4 MAIL_BOX. queue full, replace existing queued image with new one.
 	for (const auto& availablePresentMode : availablePresentModes) {
 		if (availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR) {
 			return availablePresentMode;
@@ -506,13 +510,14 @@ VkExtent2D HelloTriangle::chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capab
 	}
 	else {
 		int width, height;
+		//query resolution in pixel, not in screen coordinates
 		glfwGetFramebufferSize(window, &width, &height);
 
 		VkExtent2D actualExtent = {
 			static_cast<uint32_t>(width),
 			static_cast<uint32_t>(height)
 		};
-
+	
 		actualExtent.width = std::clamp(actualExtent.width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
 		actualExtent.height = std::clamp(actualExtent.height, capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
 
@@ -521,6 +526,7 @@ VkExtent2D HelloTriangle::chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capab
 }
 
 void HelloTriangle::createImageViews() {
+	//how to access the image, which part of the image to access
 	swapChainImageViews.resize(swapChainImages.size());
 
 	for (size_t i = 0; i < swapChainImageViews.size(); i++) {
