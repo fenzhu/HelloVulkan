@@ -1,5 +1,4 @@
 # Hello Vulkan
-code in Vulkan
 ## Environment
 Open project settings
 Go to C++ -> General -> Additional Include Directories, add the header directories for Vulkan, GLFW and GLM.
