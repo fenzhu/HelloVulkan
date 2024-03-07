@@ -1,4 +1,6 @@
-VulkanTest/x64/Debug/
-.vs/
+Debug/
 x64/
+.vs/
 .vscode/
+*.sln
+*.vcxproj.user
