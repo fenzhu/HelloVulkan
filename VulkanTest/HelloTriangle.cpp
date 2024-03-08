@@ -209,6 +209,9 @@ std::vector<const char*> HelloTriangle::getRequiredExtensions() {
 	return extensions;
 }
 
+/*
+surface as the bridge between vulkan and native window system
+*/
 void HelloTriangle::createSurface() {
 	if (glfwCreateWindowSurface(instance, window, nullptr, &surface) != VK_SUCCESS) {
 		throw std::runtime_error("failed to create window surface");
@@ -229,6 +232,12 @@ void HelloTriangle::setupDebugMessenger() {
 	}
 }
 
+/*
+the physical device should support
+1 QueueFamily(graphics, present)
+2 SwapChain Extension
+3 formats and presentModes in SwapChain
+*/
 void HelloTriangle::pickPhysicalDevice() {
 	uint32_t deviceCount = 0;
 	vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
@@ -338,6 +347,11 @@ QueueFamilyIndices HelloTriangle::findQueueFamilies(VkPhysicalDevice device) {
 	return indices;
 }
 
+/*
+similar to physical device picking
+include queue family, device extension, validation layer, device feature
+to create vulkan device as the abstract of hardware
+*/
 void HelloTriangle::createLogicalDevice() {
 	QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
 
@@ -383,6 +397,12 @@ void HelloTriangle::createLogicalDevice() {
 	vkGetDeviceQueue(device, indices.presentFamily.value(), 0, &presentQueue);
 }
 
+/*
+SwapChain act as the buffer between Vulkan and native window system, to achive
+smooth animation and efficient window updates
+1 acquiring images from it for rendering
+2 present images to the screen
+*/
 void HelloTriangle::createSwapChain() {
 	SwapChainSupportDetails swapChainSupport = querySwapChainSupport(physicalDevice);
 
@@ -525,8 +545,12 @@ VkExtent2D HelloTriangle::chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capab
 	}
 }
 
+/*
+define usage of images
+1 how to access the image
+2 which part of the image to access
+*/
 void HelloTriangle::createImageViews() {
-	//how to access the image, which part of the image to access
 	swapChainImageViews.resize(swapChainImages.size());
 
 	for (size_t i = 0; i < swapChainImageViews.size(); i++) {
@@ -554,6 +578,23 @@ void HelloTriangle::createImageViews() {
 	}
 }
 
+/*
+define the sequence of operations that take the vertices and textures of meshes 
+all the way to the pixels in the render targets
+
+shader module
+translate GLSL and HLSG to SPIR-V bytecode shader
+
+fixed functions
+1 vertext input
+2 input assembly
+3 viewport and scissors
+4 rasterizer
+5 multisampling
+6 depth and stencil testing
+7 color blending
+8 pipeline layout
+*/
 void HelloTriangle::createGraphicsPipeline() {
 	auto vertShaderCode = readFile("shaders/vert.spv");
 	auto fragShaderCode = readFile("shaders/frag.spv");
@@ -711,6 +752,13 @@ VkShaderModule HelloTriangle::createShaderModule(const std::vector<char>& code) 
 	return shaderModule;
 }
 
+/*
+tell Vulkan about 
+1 the framebuffer attachments
+2 how attachment should be handled
+3 attachments of every subpass
+4 dependency between subpass
+*/
 void HelloTriangle::createRenderPass() {
 	VkAttachmentDescription colorAttachment{};
 	colorAttachment.format = swapChainImageFormat;
@@ -757,6 +805,10 @@ void HelloTriangle::createRenderPass() {
 	}
 }
 
+/*
+framebuffer is container of image view
+bind image views to attachments in render pass
+*/
 void HelloTriangle::createFramebuffers() {
 	swapChainFramebuffers.resize(swapChainImageViews.size());
 
@@ -780,6 +832,9 @@ void HelloTriangle::createFramebuffers() {
 	}
 }
 
+/*
+allocate memory for command buffer objects
+*/
 void HelloTriangle::createCommandPool() {
 	QueueFamilyIndices queueFamilyIndices = findQueueFamilies(physicalDevice);
 
@@ -793,6 +848,12 @@ void HelloTriangle::createCommandPool() {
 	}
 }
 
+/*
+record sequence of commands that GPU executes
+benefits:
+1 batching, reduce driver overhead of issuing command one by one
+2 concurency, can submit multiple command buffers to different queues
+*/
 void HelloTriangle::createCommandBuffer() {
 	VkCommandBufferAllocateInfo allocInfo{};
 	allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -852,6 +913,10 @@ void HelloTriangle::recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t 
 	}
 }
 
+/*
+synchronization primitives, such as semaphore, fence
+to synchronize execution on GPU
+*/
 void HelloTriangle::createSyncObjects() {
 	VkSemaphoreCreateInfo semaphoreInfo{};
 	semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
