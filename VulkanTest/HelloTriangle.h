@@ -35,10 +35,13 @@ struct SwapChainSupportDetails {
 	std::vector<VkPresentModeKHR> presentModes;
 };
 
+const int MAX_FRAMES_IN_FLIGHT = 2;
+
 class HelloTriangle {
 public:
 	void run();
 private:
+	uint32_t currentFrame = 0;
 	GLFWwindow* window;
 	const uint32_t WIDTH = 800;
 	const uint32_t HEIGHT = 600;
@@ -62,9 +65,9 @@ private:
 	void cleanup();
 	void drawFrame();
 
-	VkSemaphore imageAvailableSemaphore;
-	VkSemaphore renderFinishedSemaphore;
-	VkFence inFlightFence;
+	std::vector<VkSemaphore> imageAvailableSemaphores;
+	std::vector<VkSemaphore> renderFinishedSemaphores;
+	std::vector<VkFence> inFlightFences;
 
 	VkInstance instance;
 	VkDebugUtilsMessengerEXT debugMessenger;
@@ -83,7 +86,7 @@ private:
 	VkPipeline graphicsPipeline;
 	std::vector<VkFramebuffer> swapChainFramebuffers;
 	VkCommandPool commandPool;
-	VkCommandBuffer commandBuffer;
+	std::vector<VkCommandBuffer> commandBuffers;
 
 	void createInstance();
 	bool checkValidationLayerSupport();
@@ -114,7 +117,7 @@ private:
 	void createRenderPass();
 	void createFramebuffers();
 	void createCommandPool();
-	void createCommandBuffer();
+	void createCommandBuffers();
 	void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
 	void createSyncObjects();
 	static std::vector<char> readFile(const std::string& filename);
