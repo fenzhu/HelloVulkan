@@ -41,7 +41,6 @@ class HelloTriangle {
 public:
 	void run();
 private:
-	uint32_t currentFrame = 0;
 	GLFWwindow* window;
 	const uint32_t WIDTH = 800;
 	const uint32_t HEIGHT = 600;
@@ -68,6 +67,9 @@ private:
 	std::vector<VkSemaphore> imageAvailableSemaphores;
 	std::vector<VkSemaphore> renderFinishedSemaphores;
 	std::vector<VkFence> inFlightFences;
+
+	uint32_t currentFrame = 0;
+	bool framebufferResized = false;
 
 	VkInstance instance;
 	VkDebugUtilsMessengerEXT debugMessenger;
@@ -110,6 +112,8 @@ private:
 	void createLogicalDevice();
 
 	void createSwapChain();
+	void cleanupSwapChain();
+	void recreateSwapChain();
 	void createImageViews();
 
 	void createGraphicsPipeline();
@@ -129,4 +133,5 @@ private:
 		void* pUserData);
 	static VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger);
 	static void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator);
+	static void framebufferResizeCallback(GLFWwindow* window, int width, int height);
 };
