@@ -192,6 +192,10 @@ const std::vector<uint16_t> indices = {
 	0,1,2,2,3,0
 };
 
+/*
+nested structure must be aligned by the base alignment of its members
+rounded up to a multiple of 16
+*/
 struct UniformBufferObject {
 	alignas(16) glm::mat4 model;
 	alignas(16) glm::mat4 view;
