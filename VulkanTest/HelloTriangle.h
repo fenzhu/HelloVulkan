@@ -5,6 +5,9 @@
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
+#include <chrono>
 
 #include <iostream>
 #include <iostream>
@@ -63,6 +66,7 @@ private:
 	void mainLoop();
 	void cleanup();
 	void drawFrame();
+	void updateUniformBuffer(uint32_t currentImage);
 
 	std::vector<VkSemaphore> imageAvailableSemaphores;
 	std::vector<VkSemaphore> renderFinishedSemaphores;
@@ -78,15 +82,23 @@ private:
 	VkQueue graphicsQueue;
 	VkSurfaceKHR surface;
 	VkQueue presentQueue;
+
 	VkSwapchainKHR swapChain;
 	std::vector<VkImage> swapChainImages;
 	VkFormat swapChainImageFormat;
 	VkExtent2D swapChainExtent;
 	std::vector<VkImageView> swapChainImageViews;
+
 	VkRenderPass renderPass;
+
+	VkDescriptorSetLayout descriptorSetLayout;
+	VkDescriptorPool descriptorPool;
+	std::vector<VkDescriptorSet> descriptorSets;
 	VkPipelineLayout pipelineLayout;
 	VkPipeline graphicsPipeline;
+
 	std::vector<VkFramebuffer> swapChainFramebuffers;
+
 	VkCommandPool commandPool;
 	std::vector<VkCommandBuffer> commandBuffers;
 
@@ -94,6 +106,10 @@ private:
 	VkDeviceMemory vertexBufferMemory;
 	VkBuffer indexBuffer;
 	VkDeviceMemory indexBufferMemory;
+
+	std::vector<VkBuffer> uniformBuffers;
+	std::vector<VkDeviceMemory> uniformBuffersMemory;
+	std::vector<void*> uniformBuffersMapped;
 
 	void createInstance();
 	bool checkValidationLayerSupport();
@@ -132,12 +148,17 @@ private:
 
 	void createVertexBuffer();
 	void createIndexBuffer();
+	void createUniformBuffers();
 
 	void createBuffer(VkDeviceSize size, VkBufferUsageFlags flags, VkMemoryPropertyFlags properties,
 		VkBuffer& buffer, VkDeviceMemory& bufferMemory);
 	void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
 
 	uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
+
+	void createDescriptorSetLayout();
+	void createDescriptorPool();
+	void createDescriptorSets();
 
 	static std::vector<char> readFile(const std::string& filename);
 
@@ -169,4 +190,10 @@ const std::vector<Vertex> vertices = {
 
 const std::vector<uint16_t> indices = {
 	0,1,2,2,3,0
+};
+
+struct UniformBufferObject {
+	glm::mat4 model;
+	glm::mat4 view;
+	glm::mat4 proj;
 };
