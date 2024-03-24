@@ -140,14 +140,23 @@ void HelloTriangle::updateUniformBuffer(uint32_t currentImage) {
 	float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
 
 	UniformBufferObject ubo{};
+
+	//to world space(vertices defined relatively to the center of the world)
 	ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f),
 		glm::vec3(0.0f, 0.0f, 1.0f));
 
-	ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f),
-		glm::vec3(0.0f, 0.0f, 1.0f));
+	//to camera space(vertices defined relatively to the camera)
+	ubo.view = glm::lookAt(
+		glm::vec3(2.0f, 2.0f, 2.0f),//cemera is at(2, 2, 2) in world space
+		glm::vec3(0.0f, 0.0f, 0.0f),//looks at the origin
+		glm::vec3(0.0f, 0.0f, 1.0f));//positive z is up
 
-	ubo.proj = glm::perspective(glm::radians(45.0f), swapChainExtent.width / (float)swapChainExtent.height,
-		0.1f, 10.0f);
+	//to homogeneous space(vertices defined in a cube, inside cube == onscreen)
+	ubo.proj = glm::perspective(
+		glm::radians(45.0f),//vertical field of view, usually between 90 and 30
+		swapChainExtent.width / (float)swapChainExtent.height,//aspect ratio
+		0.1f,//near clipping plane. keep as big as possible, otherwise got precision issue
+		10.0f);//far clipping plane. keep as little as possible
 	ubo.proj[1][1] *= -1;
 
 	memcpy(uniformBuffersMapped[currentImage], &ubo, sizeof(ubo));
