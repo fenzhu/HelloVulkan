@@ -7,10 +7,11 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+
+
 #include <chrono>
 #include <string>
 
-#include <iostream>
 #include <iostream>
 #include <stdexcept>
 #include <cstdlib>
@@ -112,6 +113,9 @@ private:
 	std::vector<VkDeviceMemory> uniformBuffersMemory;
 	std::vector<void*> uniformBuffersMapped;
 
+	VkImage textureImage;
+	VkDeviceMemory textureImageMemory;
+
 	void createInstance();
 	bool checkValidationLayerSupport();
 	std::vector<const char*>  getRequiredExtensions();
@@ -147,6 +151,8 @@ private:
 	void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
 	void createSyncObjects();
 
+	void createTextureImage();
+
 	void createVertexBuffer();
 	void createIndexBuffer();
 	void createUniformBuffers();
@@ -155,7 +161,16 @@ private:
 		VkBuffer& buffer, VkDeviceMemory& bufferMemory);
 	void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
 
+	void createImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling,
+		VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
+
 	uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
+
+	void transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
+	void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
+
+	VkCommandBuffer beginSingleTimeCommands();
+	void endSingleTimeCommands(VkCommandBuffer commandBuffer);
 
 	void createDescriptorSetLayout();
 	void createDescriptorPool();
