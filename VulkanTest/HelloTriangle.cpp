@@ -149,9 +149,8 @@ void HelloTriangle::updateUniformBuffer(uint32_t currentImage) {
 	UniformBufferObject ubo{};
 
 	//to world space(vertices defined relatively to the center of the world)
-	ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(0.0f),
+	ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f),
 		glm::vec3(0.0f, 0.0f, 1.0f));
-	ubo.model = glm::mat4(1.0f);
 
 	//to camera space(vertices defined relatively to the camera)
 	ubo.view = glm::lookAt(
