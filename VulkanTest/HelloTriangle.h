@@ -115,6 +115,8 @@ private:
 
 	VkImage textureImage;
 	VkDeviceMemory textureImageMemory;
+	VkImageView textureImageView;
+	VkSampler textureSampler;
 
 	void createInstance();
 	bool checkValidationLayerSupport();
@@ -141,6 +143,7 @@ private:
 	void cleanupSwapChain();
 	void recreateSwapChain();
 	void createImageViews();
+	VkImageView createImageView(VkImage image, VkFormat format);
 
 	void createGraphicsPipeline();
 	VkShaderModule createShaderModule(const std::vector<char>& code);
@@ -152,6 +155,8 @@ private:
 	void createSyncObjects();
 
 	void createTextureImage();
+	void createTextureImageView();
+	void createTextureSampler();
 
 	void createVertexBuffer();
 	void createIndexBuffer();
